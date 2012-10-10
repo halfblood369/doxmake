@@ -1,0 +1,10 @@
+{
+	"name": "doxTemplate",
+	"version": "0.0.1",
+	"dependencies": {
+		"dox": "*",
+		"github-flavored-markdown": "*",
+		"dox-template": "*"
+	},
+	"author": "halfblood"
+}

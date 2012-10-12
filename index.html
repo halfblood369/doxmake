@@ -1,0 +1,1364 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8' />
+    <title>pomelo API</title>
+    <meta http-equiv='content-type' content='text/html' />
+    <meta http-equiv='content-style-type' content='text/css' />
+    <meta http-equiv='content-script-type' content='text/javascript' />
+    <meta name='author' content='netease' />
+    <meta name='version' content='1.0' />
+    <meta name='keywords' content='' />
+    <meta name='description' content='' />
+
+    <link type='text/css' rel='stylesheet' href='css/base.css'>
+    <link type='text/css' rel='stylesheet' href='css/api.css'>
+
+    <script>
+      var raw = [{"id":"0-1350012987044","name":"StatusService","signiture":"StatusService","type":"declaration","ctx":{"type":"declaration","name":"StatusService","value":"module.exports","string":"StatusService"},"description":{"full":"<p>@class StatusService</p>","summary":"<p>@class StatusService</p>","body":""},"full_description":"<p>@class StatusService</p>","code":"var StatusService = module.exports;","params":[],"has_params":false,"tags":[{"type":"constructor","string":""}],"module":true,"related":{"href":""},"has_related":true,"methods":[{"id":"2-1350012987044","name":"addStatus","signiture":"StatusService.prototype.addStatus()","type":"method","ctx":{"type":"method","constructor":"StatusService","name":"addStatus","string":"StatusService.prototype.addStatus()"},"description":{"full":"<p>Add uid and serverId pair into status records and kick the old login if any.<br />The callback get one argument (err).</p>","summary":"<p>Add uid and serverId pair into status records and kick the old login if any.<br />The callback get one argument (err).</p>","body":""},"full_description":"<p>Add uid and serverId pair into status records and kick the old login if any. The callback get one argument (err).</p>","code":"StatusService.prototype.addStatus = function(uid, sid, cb) {\n\tlogger.debug('add satus:' + uid + ', ' + sid);\n\tvar oldSid = uidMap[uid];\n\n\tfunction addNewStatus(err) {\n\t\tif(!err) {\n\t\t\tuidMap[uid] = sid;\n\t\t}\n\t\tutils.invokeCallback(cb, err);\n\t}\n\n\tif(!!oldSid) {\n\t\tkick(uid, oldSid, addNewStatus);\n\t} else {\n\t\taddNewStatus();\n\t}\n\n};","params":[{"type":"param","types":["Number"],"name":"uid","description":"user id"},{"type":"param","types":["Number"],"name":"sid","description":"server id"},{"type":"param","types":["Function"],"name":"cb","description":"callback function"}],"has_params":true,"tags":[{"type":"method","string":"addStatus"},{"type":"param","types":["Number"],"name":"uid","description":"user id"},{"type":"param","types":["Number"],"name":"sid","description":"server id"},{"type":"param","types":["Function"],"name":"cb","description":"callback function"}],"module":false,"parent":"StatusService","related":{"href":""},"has_related":true},{"id":"3-1350012987044","name":"removeStatus","signiture":"StatusService.prototype.removeStatus()","type":"method","ctx":{"type":"method","constructor":"StatusService","name":"removeStatus","string":"StatusService.prototype.removeStatus()"},"description":{"full":"<p>Remove status record by uid. The callback get one argument (err).</p>","summary":"<p>Remove status record by uid. The callback get one argument (err).</p>","body":""},"full_description":"<p>Remove status record by uid. The callback get one argument (err).</p>","code":"StatusService.prototype.removeStatus = function(uid, cb) {\n\tdelete uidMap[uid];\n\n\tutils.invokeCallback(cb);\n};","params":[{"type":"param","types":["Number"],"name":"uid","description":"user id"},{"type":"param","types":["Number"],"name":"cb","description":"callback function"}],"has_params":true,"tags":[{"type":"method","string":"removeStatus"},{"type":"param","types":["Number"],"name":"uid","description":"user id"},{"type":"param","types":["Number"],"name":"cb","description":"callback function"}],"module":false,"parent":"StatusService","related":{"href":""},"has_related":true},{"id":"4-1350012987044","name":"queryStatus","signiture":"StatusService.prototype.queryStatus()","type":"method","ctx":{"type":"method","constructor":"StatusService","name":"queryStatus","string":"StatusService.prototype.queryStatus()"},"description":{"full":"<p>Query status by uid. The callback get two arguments (err, sid)</p>","summary":"<p>Query status by uid. The callback get two arguments (err, sid)</p>","body":""},"full_description":"<p>Query status by uid. The callback get two arguments (err, sid)</p>","code":"StatusService.prototype.queryStatus = function(uid, cb) {\n\tutils.invokeCallback(cb, null, uidMap[uid]);\n};","params":[{"type":"param","types":["String"],"name":"uid","description":"user id"},{"type":"param","types":["Function"],"name":"cb","description":"sid: server id corresponsed with the uid or null/undefined for none"}],"has_params":true,"tags":[{"type":"method","string":"queryStatus"},{"type":"param","types":["String"],"name":"uid","description":"user id"},{"type":"param","types":["Function"],"name":"cb","description":"sid: server id corresponsed with the uid or null/undefined for none"}],"module":false,"parent":"StatusService","related":{"href":""},"has_related":true},{"id":"5-1350012987044","name":"queryStatusBatch","signiture":"StatusService.prototype.queryStatusBatch()","type":"method","ctx":{"type":"method","constructor":"StatusService","name":"queryStatusBatch","string":"StatusService.prototype.queryStatusBatch()"},"description":{"full":"<p>Query status by uids. The callback get three arguments (err, result, missing)</p>","summary":"<p>Query status by uids. The callback get three arguments (err, result, missing)</p>","body":""},"full_description":"<p>Query status by uids. The callback get three arguments (err, result, missing)</p>","code":"StatusService.prototype.queryStatusBatch = function(uids, cb) {\n\tvar result = {};\n\tvar missing = [];\n\n\tvar sid, list;\n\tfor(var i=0, l=uids.length; i<l; i++) {\n\t\tsid = uidMap[uids[i]];\n\t\tif(!sid) {\n\t\t\tmissing.push(uids[i]);\n\t\t\tcontinue;\n\t\t}\n\n\t\tlist = result[sid];\n\t\tif(!list) {\n\t\t\tlist = [];\n\t\t\tresult[sid] = list;\n\t\t}\n\t\tlist.push(uids[i]);\n\t}\n\n\tutils.invokeCallback(cb, null, result, missing);\n};","params":[{"type":"param","types":["Array"],"name":"uids","description":"list of uid"},{"type":"param","types":["Function"],"name":"cb","description":"result:{sid:[uid]}, missing:[missingUid]"}],"has_params":true,"tags":[{"type":"method","string":"queryStatusBatch"},{"type":"param","types":["Array"],"name":"uids","description":"list of uid"},{"type":"param","types":["Function"],"name":"cb","description":"result:{sid:[uid]}, missing:[missingUid]"}],"module":false,"parent":"StatusService","related":{"href":""},"has_related":true}]},{"id":"7-1350012987044","name":"InterSession","signiture":"InterSession()","type":"function","ctx":{"type":"function","name":"InterSession","string":"InterSession()"},"description":{"full":"<p>Session is bound to each user and maintains a number of informations as follows: <br />key(socket.id), userId, userName, playerName, playerId, areaId, socket, etc.</p>","summary":"<p>Session is bound to each user and maintains a number of informations as follows: <br />key(socket.id), userId, userName, playerName, playerId, areaId, socket, etc.</p>","body":""},"full_description":"<p>Session is bound to each user and maintains a number of informations as follows:  key(socket.id), userId, userName, playerName, playerId, areaId, socket, etc.</p>","code":"var InterSession = function(opts) {\n\t  EventEmitter.call(this);\n\t  this.uid = '';\n\t  for(var f in opts) {\n\t\t    this[f] = opts[f];\n\t  }\n};\nutil.inherits(InterSession, EventEmitter);\n\nvar pro = InterSession.prototype;","params":[],"has_params":false,"tags":[{"type":"class","string":"session"},{"type":"constructor","string":""}],"module":true,"related":{"href":""},"has_related":true,"methods":[{"id":"10-1350012987045","name":"userLogined","signiture":"InterSession.prototype.userLogined()","type":"method","ctx":{"type":"method","constructor":"InterSession","name":"userLogined","string":"InterSession.prototype.userLogined()"},"description":{"full":"<p>User logined callback.<br />This method would bind the uid with the session.</p>","summary":"<p>User logined callback.<br />This method would bind the uid with the session.</p>","body":""},"full_description":"<p>User logined callback. This method would bind the uid with the session.</p>","code":"InterSession.prototype.userLogined = function(uid) {\n\t  //get origin session instance\n\t  var session = exp.getSession(this.key);\n\t  if(!session) {\n\t\t    return false;\n\t  }\n\t  \n\t  if(!!session._logined) {\n\t\t    return false;\n\t  }\n\t  set(this, '_logined', true);\n\t  set(this, 'uid', uid);\n\t  uidMap[uid] = session;\n\t  this.emit('login', session);\n\t  return true;\n};","params":[{"type":"param","types":["Number"],"name":"uid","description":"userId"}],"has_params":true,"tags":[{"type":"method","string":"userLogined"},{"type":"param","types":["Number"],"name":"uid","description":"userId"}],"module":false,"parent":"InterSession","related":{"href":""},"has_related":true},{"id":"11-1350012987045","name":"set","signiture":"InterSession.prototype.set()","type":"method","ctx":{"type":"method","constructor":"InterSession","name":"set","string":"InterSession.prototype.set()"},"description":{"full":"<p>Set value for the session.</p>","summary":"<p>Set value for the session.</p>","body":""},"full_description":"<p>Set value for the session.</p>","code":"InterSession.prototype.set = function(key, value) {\n    set(this, key, value);\n};","params":[{"type":"param","types":["String"],"name":"key","description":""},{"type":"param","types":["Object"],"name":"value","description":"the value of key"}],"has_params":true,"tags":[{"type":"method","string":"set"},{"type":"param","types":["String"],"name":"key","description":""},{"type":"param","types":["Object"],"name":"value","description":"the value of key"}],"module":false,"parent":"InterSession","related":{"href":""},"has_related":true},{"id":"12-1350012987045","name":"on","signiture":"InterSession.prototype.on()","type":"method","ctx":{"type":"method","constructor":"InterSession","name":"on","string":"InterSession.prototype.on()"},"description":{"full":"<p>Bind event for the session.</p>","summary":"<p>Bind event for the session.</p>","body":""},"full_description":"<p>Bind event for the session.</p>","code":"InterSession.prototype.on = function() {\n\t  var session = exp.getSession(this.key);\n\t  if(!session) {\n\t\t    return false;\n\t  }\n\t  EventEmitter.prototype.on.apply(session, arguments);\n};","params":[],"has_params":false,"tags":[{"type":"method","string":"on"}],"module":false,"parent":"InterSession","related":{"href":""},"has_related":true},{"id":"13-1350012987045","name":"emit","signiture":"InterSession.prototype.emit()","type":"method","ctx":{"type":"method","constructor":"InterSession","name":"emit","string":"InterSession.prototype.emit()"},"description":{"full":"<p>Emit a event for the session.</p>","summary":"<p>Emit a event for the session.</p>","body":""},"full_description":"<p>Emit a event for the session.</p>","code":"InterSession.prototype.emit = function() {\n\t  var session = exp.getSession(this.key);\n\t  if(!session) {\n\t\t    return false;\n\t  }\n\t  EventEmitter.prototype.emit.apply(session, arguments);\n};","params":[],"has_params":false,"tags":[{"type":"method","string":"emit"}],"module":false,"parent":"InterSession","related":{"href":""},"has_related":true},{"id":"14-1350012987045","name":"closing","signiture":"InterSession.prototype.closing()","type":"method","ctx":{"type":"method","constructor":"InterSession","name":"closing","string":"InterSession.prototype.closing()"},"description":{"full":"<p>Closing callback for the session.</p>","summary":"<p>Closing callback for the session.</p>","body":""},"full_description":"<p>Closing callback for the session.</p>","code":"InterSession.prototype.closing = function() {\n\t  var reason = this.isKicked ? 'kick' : null;\n\t  this.emit('closing', this, reason);\n};","params":[],"has_params":false,"tags":[{"type":"method","string":"closing"}],"module":false,"parent":"InterSession","related":{"href":""},"has_related":true},{"id":"15-1350012987045","name":"closed","signiture":"InterSession.prototype.closed()","type":"method","ctx":{"type":"method","constructor":"InterSession","name":"closed","string":"InterSession.prototype.closed()"},"description":{"full":"<p>Closed callback for the session.</p>","summary":"<p>Closed callback for the session.</p>","body":""},"full_description":"<p>Closed callback for the session.</p>","code":"InterSession.prototype.closed = function() {\n\t  if(!!this._closed) {\n\t\t    return;\n\t  }\n\t  set(this, '_closed', true);\n\t  set(this, '_logined', false);\n\t  delete socketMap[this.key];\n\t  delete msgQueues[this.key];\n\n\t  var reason = this.isKicked ? 'kick' : null;\n\t  this.emit('closed', this, reason);\n};","params":[],"has_params":false,"tags":[{"type":"method","string":"closed"}],"module":false,"parent":"InterSession","related":{"href":""},"has_related":true}]},{"id":"29-1350012987045","name":"Pomelo","signiture":"Pomelo","type":"declaration","ctx":{"type":"declaration","name":"Pomelo","value":"module.exports = {}","string":"Pomelo"},"description":{"full":"<p>@class pomelo</p>","summary":"<p>@class pomelo</p>","body":""},"full_description":"<p>@class pomelo</p>","code":"var Pomelo = module.exports = {};","params":[],"has_params":false,"tags":[{"type":"constructor","string":""}],"module":true,"related":{"href":""},"has_related":true,"methods":[{"id":"32-1350012987045","name":"createApp","signiture":"Pomelo.prototype.createApp()","type":"method","ctx":{"type":"method","constructor":"Pomelo","name":"createApp","string":"Pomelo.prototype.createApp()"},"description":{"full":"<p>Create an pomelo application.</p>","summary":"<p>Create an pomelo application.</p>","body":""},"full_description":"<p>Create an pomelo application.</p>","code":"Pomelo.prototype.createApp = function () {\n    var app = application;\n    app.stack = [].slice.apply(arguments);\n    app.init();\n    self.app = app;\n    return app;\n};","params":[],"has_params":false,"tags":[{"type":"method","string":"createApp"},{"type":"return","types":["Function"],"description":""},{"type":"api","visibility":"public"}],"module":false,"parent":"Pomelo","related":{"href":""},"has_related":true}]},{"id":"35-1350012987045","name":"Channel","signiture":"Channel()","type":"function","ctx":{"type":"function","name":"Channel","string":"Channel()"},"description":{"full":"<p>Channel  maintains a number of user informations: userId, serverId and their mapping. <br /><br />It is used to  broadcast message to users in the channel. </p>","summary":"<p>Channel  maintains a number of user informations: userId, serverId and their mapping. <br /><br />It is used to  broadcast message to users in the channel. </p>","body":""},"full_description":"<p>Channel  maintains a number of user informations: userId, serverId and their mapping.   It is used to  broadcast message to users in the channel. </p>","code":"var Channel = function(name) {","params":[],"has_params":false,"tags":[{"type":"class","string":"channel"},{"type":"constructor","string":""}],"module":true,"related":{"href":""},"has_related":true,"methods":[{"id":"38-1350012987045","name":"add","signiture":"Channel.prototype.add()","type":"method","ctx":{"type":"method","constructor":"Channel","name":"add","string":"Channel.prototype.add()"},"description":{"full":"<p>Add user into channel. The callback get one argument (err).</p>","summary":"<p>Add user into channel. The callback get one argument (err).</p>","body":""},"full_description":"<p>Add user into channel. The callback get one argument (err).</p>","code":"Channel.prototype.add = function(uid, sid, cb) {\n  var err = null;\n  if(!!this._destroy) {\n    err = new Error('channel ' + this.name + ' has been destroyed');\n  } else {\n    add(uid, sid, this.groups, this.defaultGroup);\n  }\n\n  process.nextTick(function() {\n    utils.invokeCallback(cb, err);\n  });\n};","params":[{"type":"param","types":["Number"],"name":"uid","description":"user id"},{"type":"param","types":["Number"],"name":"sid","description":"frontend server id which user has connected to"},{"type":"param","types":["Function"],"name":"cb","description":"callback function"}],"has_params":true,"tags":[{"type":"method","string":"add"},{"type":"param","types":["Number"],"name":"uid","description":"user id"},{"type":"param","types":["Number"],"name":"sid","description":"frontend server id which user has connected to"},{"type":"param","types":["Function"],"name":"cb","description":"callback function"}],"module":false,"parent":"Channel","related":{"href":""},"has_related":true},{"id":"39-1350012987045","name":"leave","signiture":"Channel.prototype.leave()","type":"method","ctx":{"type":"method","constructor":"Channel","name":"leave","string":"Channel.prototype.leave()"},"description":{"full":"<p>Remove user from channel. The callback get one argument (err).</p>","summary":"<p>Remove user from channel. The callback get one argument (err).</p>","body":""},"full_description":"<p>Remove user from channel. The callback get one argument (err).</p>","code":"Channel.prototype.leave = function(uid, sid, cb) {\n\tif(!sid) {\n\t\tremoveUid(uid, this.groups, this.defaultGroup);\n\t} else {\n    deleteFrom(uid, sid, this.groups[sid]);\n  }\n\n  process.nextTick(function() {\n    utils.invokeCallback(cb);\n  });\n};","params":[{"type":"param","types":["Number"],"name":"uid","description":"user id"},{"type":"param","types":["Number"],"name":"sid","description":"frontend server id which user has connected to. remove uid for all groups if sid not specified."},{"type":"param","types":["Function"],"name":"cb","description":"callback function"}],"has_params":true,"tags":[{"type":"method","string":"leave"},{"type":"param","types":["Number"],"name":"uid","description":"user id"},{"type":"param","types":["Number"],"name":"sid","description":"frontend server id which user has connected to. remove uid for all groups if sid not specified."},{"type":"param","types":["Function"],"name":"cb","description":"callback function"},{"type":"return","types":["[Boolean]"],"description":"true if success or false if fail"}],"module":false,"parent":"Channel","related":{"href":""},"has_related":true},{"id":"40-1350012987045","name":"destroy","signiture":"Channel.prototype.destroy()","type":"method","ctx":{"type":"method","constructor":"Channel","name":"destroy","string":"Channel.prototype.destroy()"},"description":{"full":"<p>Destroy channel. The callback get one argument (err).</p>","summary":"<p>Destroy channel. The callback get one argument (err).</p>","body":""},"full_description":"<p>Destroy channel. The callback get one argument (err).</p>","code":"Channel.prototype.destroy = function(cb) {\n  this.__destroy = true;\n  exp.destroyChannel(this.name, force);\n\n  process.nextTick(function() {\n    utils.invokeCallback(cb);\n  });\n};","params":[{"type":"param","types":["Function"],"name":"cb","description":"callback function"}],"has_params":true,"tags":[{"type":"param","types":["Function"],"name":"cb","description":"callback function"},{"type":"method","string":"destroy"}],"module":false,"parent":"Channel","related":{"href":""},"has_related":true},{"id":"41-1350012987045","name":"pushMessage","signiture":"Channel.prototype.pushMessage()","type":"method","ctx":{"type":"method","constructor":"Channel","name":"pushMessage","string":"Channel.prototype.pushMessage()"},"description":{"full":"<p>Push message to all the members in the channel. The callback get one argument (err).</p>","summary":"<p>Push message to all the members in the channel. The callback get one argument (err).</p>","body":""},"full_description":"<p>Push message to all the members in the channel. The callback get one argument (err).</p>","code":"Channel.prototype.pushMessage = function(msg, cb) {\n\tvar self = this;\n\tregroup(this.groups, this.defaultGroup, function(err, miss) {\n\t\tif(!!err) {\n\t\t\tutils.invokeCallback(cb, err);\n\t\t\treturn;\n\t\t}\n\n\t\tif(__.size(self.groups) === 0) {\n\t\t\tutils.invokeCallback();\n\t\t\treturn;\n\t\t}\n\t\tsendMessageByGroup(msg, self.groups, cb);\n\t});\n};","params":[{"type":"param","types":["Object"],"name":"msg","description":"message that would be sent to client"},{"type":"param","types":["Function"],"name":"cb","description":"callback function"}],"has_params":true,"tags":[{"type":"method","string":"pushMessage"},{"type":"param","types":["Object"],"name":"msg","description":"message that would be sent to client"},{"type":"param","types":["Function"],"name":"cb","description":"callback function"}],"module":false,"parent":"Channel","related":{"href":""},"has_related":true}]},{"id":"46-1350012987045","name":"regroup","signiture":"regroup()","type":"function","ctx":{"type":"function","name":"regroup","string":"regroup()"},"description":{"full":"<p>query connection status of the ungroup uids from status server and then merge them into groups</p>","summary":"<p>query connection status of the ungroup uids from status server and then merge them into groups</p>","body":""},"full_description":"<p>query connection status of the ungroup uids from status server and then merge them into groups</p>","code":"var regroup = function(groups, defGroup, cb) {\n\tif(defGroup.length === 0) {\n\t\tutils.invokeCallback(cb);\n\t\treturn;\n\t}\n\n\tvar app = pomelo.app;\n\tapp.rpc.status.statusRemote.queryStatusBatch(null, defGroup, function(err, res, miss) {\n\t\tif(!!err) {\n\t\t\tlogger.error('fail to query status, err:' + err.stack);\n\t\t\tutils.invokeCallback(cb, err);\n\t\t\treturn;\n\t\t}\n\n\t\tvar i, l;\n\t\tif(res) {\n\t\t\tvar uids, uid;\n\t\t\tfor(var sid in res) {\n\t\t\t\tuids = res[sid];\n\t\t\t\tfor(i=0, l=uids.length; i<l; i++) {\n\t\t\t\t\tuid = uids[i];\n\t\t\t\t\tadd(uid, sid, groups, defGroup);\n\t\t\t\t}\n\t\t\t}\n\t\t}\n\n\t\tdefGroup.length = 0;\n\t\tif(miss && miss.length > 0) {\n\t\t\tlogger.warn('fail to group uids:' + miss);\n\t\t\t// keep the miss uids\n\t\t\tfor(i=0, l=miss.length; i<l; i++) {\n\t\t\t\tdefGroup.push(miss[i]);\n\t\t\t}\n\t\t}\n\n\t\tutils.invokeCallback(cb, null, miss);\n\t});\t//end of proxy\n};","params":[{"type":"param","types":["groups"],"name":"[Object]","description":"grouped uids, key: sid, value: [uid]"},{"type":"param","types":["defGroup"],"name":"[Array]","description":"ungroup uids"},{"type":"param","types":["cb"],"name":"[Function]","description":"cb(err, miss). miss: array of miss uids"}],"has_params":true,"tags":[{"type":"class","string":"regroup"},{"type":"constructor","string":""},{"type":"param","types":["groups"],"name":"[Object]","description":"grouped uids, key: sid, value: [uid]"},{"type":"param","types":["defGroup"],"name":"[Array]","description":"ungroup uids"},{"type":"param","types":["cb"],"name":"[Function]","description":"cb(err, miss). miss: array of miss uids"}],"module":true,"related":{"href":""},"has_related":true,"methods":[{"id":"47-1350012987045","name":"add","signiture":"regroup.prototype.add()","type":"method","ctx":{"type":"method","constructor":"regroup","name":"add","string":"regroup.prototype.add()"},"description":{"full":"<p>add uid and sid into group. add the uid into defGroup if the sid not specified</p>","summary":"<p>add uid and sid into group. add the uid into defGroup if the sid not specified</p>","body":""},"full_description":"<p>add uid and sid into group. add the uid into defGroup if the sid not specified</p>","code":"regroup.prototype.add = function(uid, sid, groups, defGroup) {\n\tif(!sid) {\n\t\tdefGroup.push(uid);\n\t\treturn true;\n\t}\n\n\tvar group = groups[sid];\n\tif(!group) {\n\t\tgroup = [];\n\t\tgroups[sid] = group;\n\t}\n\n\tgroup.push(uid);\n\treturn true;\n};","params":[{"type":"param","types":["uid"],"name":"user","description":"id"},{"type":"param","types":["sid"],"name":"server","description":"id"},{"type":"param","types":["groups"],"name":"{Object}","description":"grouped uids, , key: sid, value: [uid]"},{"type":"param","types":["defGroup"],"name":"{Array}","description":"ungroup uids"}],"has_params":true,"tags":[{"type":"method","string":"add"},{"type":"param","types":["uid"],"name":"user","description":"id"},{"type":"param","types":["sid"],"name":"server","description":"id"},{"type":"param","types":["groups"],"name":"{Object}","description":"grouped uids, , key: sid, value: [uid]"},{"type":"param","types":["defGroup"],"name":"{Array}","description":"ungroup uids"}],"module":false,"parent":"regroup","related":{"href":""},"has_related":true}]},{"id":"52-1350012987045","name":"Application","signiture":"Application","type":"declaration","ctx":{"type":"declaration","name":"Application","value":"module.exports = {}","string":"Application"},"description":{"full":"<p>@class application</p>","summary":"<p>@class application</p>","body":""},"full_description":"<p>@class application</p>","code":"var Application = module.exports = {};","params":[],"has_params":false,"tags":[{"type":"constructor","string":""}],"module":true,"related":{"href":""},"has_related":true,"methods":[{"id":"63-1350012987045","name":"set","signiture":"Application.prototype.set()","type":"method","ctx":{"type":"method","constructor":"Application","name":"set","string":"Application.prototype.set()"},"description":{"full":"<p>Assign <code>setting</code> to <code>val</code>, or return <code>setting</code>'s value.<br />Mounted servers inherit their parent server's settings.</p>","summary":"<p>Assign <code>setting</code> to <code>val</code>, or return <code>setting</code>'s value.<br />Mounted servers inherit their parent server's settings.</p>","body":""},"full_description":"<p>Assign <code>setting</code> to <code>val</code>, or return <code>setting</code>'s value. Mounted servers inherit their parent server's settings.</p>","code":"Application.prototype.set = function (setting, val) {\n\tvar env = app.get('env');\n\tif (utils.endsWith(val, '.json')) {\n\t\tval = require(val); \n\t\tif (!!val[env]) {\n\t\t\tval = val[env];\n\t\t}\n\t}\n\tif (1 == arguments.length) {\n\t\tif (this.settings.hasOwnProperty(setting)) {\n\t\t\treturn this.settings[setting];\n\t\t} else if (this.parent) {\n\t\t\treturn this.parent.set(setting);\n\t\t}\n\t} else {\n\t\tthis.settings[setting] = val;\n\t\tthis[setting] = val;\n\t\treturn this;\n\t}\n};","params":[{"type":"param","types":["String"],"name":"setting","description":"the property of setting"},{"type":"param","types":["String"],"name":"val","description":"the value of setting"}],"has_params":true,"tags":[{"type":"method","string":"set"},{"type":"param","types":["String"],"name":"setting","description":"the property of setting"},{"type":"param","types":["String"],"name":"val","description":"the value of setting"},{"type":"return","types":["Server","Mixed"],"description":"for chaining, or the setting value"},{"type":"api","visibility":"public"}],"module":false,"parent":"Application","related":{"href":""},"has_related":true},{"id":"65-1350012987045","name":"get","signiture":"Application.prototype.get()","type":"method","ctx":{"type":"method","constructor":"Application","name":"get","string":"Application.prototype.get()"},"description":{"full":"<p>Get property from setting.</p>","summary":"<p>Get property from setting.</p>","body":""},"full_description":"<p>Get property from setting.</p>","code":"Application.prototype.get = function (setting) {\n\tvar val = this.settings[setting];\n\treturn val;\n};","params":[{"type":"param","types":["String"],"name":"setting","description":"the property of setting"}],"has_params":true,"tags":[{"type":"method","string":"get"},{"type":"param","types":["String"],"name":"setting","description":"the property of setting"},{"type":"return","types":["String"],"description":"val"},{"type":"api","visibility":"public"}],"module":false,"parent":"Application","related":{"href":""},"has_related":true},{"id":"66-1350012987045","name":"enabled","signiture":"Application.prototype.enabled()","type":"method","ctx":{"type":"method","constructor":"Application","name":"enabled","string":"Application.prototype.enabled()"},"description":{"full":"<p>Check if <code>setting</code> is enabled.</p>","summary":"<p>Check if <code>setting</code> is enabled.</p>","body":""},"full_description":"<p>Check if <code>setting</code> is enabled.</p>","code":"Application.prototype.enabled = function (setting) {\n\treturn !!this.set(setting);\n};","params":[{"type":"param","types":["String"],"name":"setting","description":"the property of setting"}],"has_params":true,"tags":[{"type":"method","string":"enabled"},{"type":"param","types":["String"],"name":"setting","description":"the property of setting"},{"type":"return","types":["Boolean"],"description":""},{"type":"api","visibility":"public"}],"module":false,"parent":"Application","related":{"href":""},"has_related":true},{"id":"67-1350012987045","name":"disabled","signiture":"Application.prototype.disabled()","type":"method","ctx":{"type":"method","constructor":"Application","name":"disabled","string":"Application.prototype.disabled()"},"description":{"full":"<p>Check if <code>setting</code> is disabled.</p>","summary":"<p>Check if <code>setting</code> is disabled.</p>","body":""},"full_description":"<p>Check if <code>setting</code> is disabled.</p>","code":"Application.prototype.disabled = function (setting) {\n\treturn !this.set(setting);\n};","params":[{"type":"param","types":["String"],"name":"setting","description":"the "}],"has_params":true,"tags":[{"type":"method","string":"disabled"},{"type":"param","types":["String"],"name":"setting","description":"the "},{"type":"return","types":["Boolean"],"description":""},{"type":"api","visibility":"public"}],"module":false,"parent":"Application","related":{"href":""},"has_related":true},{"id":"68-1350012987045","name":"enable","signiture":"Application.prototype.enable()","type":"method","ctx":{"type":"method","constructor":"Application","name":"enable","string":"Application.prototype.enable()"},"description":{"full":"<p>Enable <code>setting</code>.</p>","summary":"<p>Enable <code>setting</code>.</p>","body":""},"full_description":"<p>Enable <code>setting</code>.</p>","code":"Application.prototype.enable = function (setting) {\n\tvar settingPath = __dirname + '/common/service/' + setting + '.js';\n\tvar exists = fs.existsSync(settingPath);\n\tif (exists) {\n\t\trequire(settingPath).run(app.get(setting + 'Config'));\n\t}\n\treturn this.set(setting, true);\n};","params":[{"type":"param","types":["String"],"name":"setting","description":"the property of setting"}],"has_params":true,"tags":[{"type":"method","string":"enable"},{"type":"param","types":["String"],"name":"setting","description":"the property of setting"},{"type":"return","types":["app"],"description":"for chaining"},{"type":"api","visibility":"public"}],"module":false,"parent":"Application","related":{"href":""},"has_related":true},{"id":"69-1350012987045","name":"disable","signiture":"Application.prototype.disable()","type":"method","ctx":{"type":"method","constructor":"Application","name":"disable","string":"Application.prototype.disable()"},"description":{"full":"<p>Disable <code>setting</code>.</p>","summary":"<p>Disable <code>setting</code>.</p>","body":""},"full_description":"<p>Disable <code>setting</code>.</p>","code":"Application.prototype.disable = function (setting) {\n\treturn this.set(setting, false);\n};","params":[{"type":"param","types":["String"],"name":"setting","description":"the property of setting"}],"has_params":true,"tags":[{"type":"method","string":"disable"},{"type":"param","types":["String"],"name":"setting","description":"the property of setting"},{"type":"return","types":["app"],"description":"for chaining"},{"type":"api","visibility":"public"}],"module":false,"parent":"Application","related":{"href":""},"has_related":true},{"id":"70-1350012987045","name":"configure","signiture":"Application.prototype.configure()","type":"method","ctx":{"type":"method","constructor":"Application","name":"configure","string":"Application.prototype.configure()"},"description":{"full":"<p>Configure callback for zero or more envs,<br />when no env is specified that callback will<br />be invoked for all environments. Any combination<br />can be used multiple times, in any order desired.</p>\n\n<h2>Examples</h2>\n\n<p>app.configure(function(){<br />     // executed for all envs<br />   });</p>\n\n<p>app.configure('stage', function(){<br />     // executed staging env<br />   });</p>\n\n<p>app.configure('stage', 'production', function(){<br />     // executed for stage and production<br />   });</p>","summary":"<p>Configure callback for zero or more envs,<br />when no env is specified that callback will<br />be invoked for all environments. Any combination<br />can be used multiple times, in any order desired.</p>","body":"<h2>Examples</h2>\n\n<p>app.configure(function(){<br />     // executed for all envs<br />   });</p>\n\n<p>app.configure('stage', function(){<br />     // executed staging env<br />   });</p>\n\n<p>app.configure('stage', 'production', function(){<br />     // executed for stage and production<br />   });</p>"},"full_description":"<p>Configure callback for zero or more envs, when no env is specified that callback will be invoked for all environments. Any combination can be used multiple times, in any order desired.</p>\n\n<h2>Examples</h2>\n\n<p>app.configure(function(){      // executed for all envs    });</p>\n\n<p>app.configure('stage', function(){      // executed staging env    });</p>\n\n<p>app.configure('stage', 'production', function(){      // executed for stage and production    });</p>","code":"Application.prototype.configure = function (env, fn) {\n\tvar args = [].slice.call(arguments);\n\tfn = args.pop();\n\n\tvar runEnv = 'all';\n\tif (args.length > 0) {\n\t\trunEnv = args[0];\n\t}\n\tvar serverType = 'all';\n\tif (args.length > 1) {\n\t\tserverType = args[1];\n\t}\n\tif (runEnv == 'all' || runEnv.indexOf(this.settings.env) >= 0) {\n\t\tif (serverType == 'all' || this.settings.serverType == 'all' || \n\t\t\t\tserverType.indexOf(this.settings.serverType) >= 0) {\n\t\t\tfn.call(this);\n\t\t}\n\t}\n\treturn this;\n};","params":[{"type":"param","types":["String"],"name":"env","description":"environment"},{"type":"param","types":["Function"],"name":"fn","description":"function"}],"has_params":true,"tags":[{"type":"method","string":"configure"},{"type":"param","types":["String"],"name":"env","description":"environment"},{"type":"param","types":["Function"],"name":"fn","description":"function"},{"type":"return","types":["app"],"description":"for chaining"},{"type":"api","visibility":"public"}],"module":false,"parent":"Application","related":{"href":""},"has_related":true}]},{"id":"78-1350012987046","name":"ChannelService","signiture":"ChannelService","type":"declaration","ctx":{"type":"declaration","name":"ChannelService","value":"module.exports","string":"ChannelService"},"description":{"full":"<p>@class ChannelService</p>","summary":"<p>@class ChannelService</p>","body":""},"full_description":"<p>@class ChannelService</p>","code":"var ChannelService = module.exports;","params":[],"has_params":false,"tags":[{"type":"constructor","string":""}],"module":true,"related":{"href":""},"has_related":true,"methods":[{"id":"79-1350012987046","name":"getLocalChannel","signiture":"ChannelService.prototype.getLocalChannel()","type":"method","ctx":{"type":"method","constructor":"ChannelService","name":"getLocalChannel","string":"ChannelService.prototype.getLocalChannel()"},"description":{"full":"<p>Asynchronous getLocalChannel.The callback gets two arguments (err, channel).</p>","summary":"<p>Asynchronous getLocalChannel.The callback gets two arguments (err, channel).</p>","body":""},"full_description":"<p>Asynchronous getLocalChannel.The callback gets two arguments (err, channel).</p>","code":"ChannelService.prototype.getLocalChannel = function(opts, cb) {\n  var channel = channelManager.getChannel(opts.name, opts.create);\n  var err = null;\n  if(!channel) {\n    err = new Error('local channel not exist, name:' + opts.name);\n  }\n\n  process.nextTick(function() {\n    utils.invokeCallback(cb, err, channel);\n  });\n};","params":[{"type":"param","types":["Object"],"name":"opts","description":"channel info parameters {name: channelName, create: createIfNotExist}"},{"type":"param","types":["Function"],"name":"cb","description":"callback function"}],"has_params":true,"tags":[{"type":"method","string":"getLocalChannel"},{"type":"param","types":["Object"],"name":"opts","description":"channel info parameters {name: channelName, create: createIfNotExist}"},{"type":"param","types":["Function"],"name":"cb","description":"callback function"}],"module":false,"parent":"ChannelService","related":{"href":""},"has_related":true},{"id":"80-1350012987046","name":"getLocalChannelSync","signiture":"ChannelService.prototype.getLocalChannelSync()","type":"method","ctx":{"type":"method","constructor":"ChannelService","name":"getLocalChannelSync","string":"ChannelService.prototype.getLocalChannelSync()"},"description":{"full":"<p>Synchronous getLocalChannel. Return the channel named opts.name if opts.create is true.</p>","summary":"<p>Synchronous getLocalChannel. Return the channel named opts.name if opts.create is true.</p>","body":""},"full_description":"<p>Synchronous getLocalChannel. Return the channel named opts.name if opts.create is true.</p>","code":"ChannelService.prototype.getLocalChannelSync = function(opts) {\n  return channelManager.getChannel(opts.name, opts.create);\n};","params":[{"type":"param","types":["Object"],"name":"opts","description":"channel info parameters {name: channelName, create: createIfNotExist}"}],"has_params":true,"tags":[{"type":"param","types":["Object"],"name":"opts","description":"channel info parameters {name: channelName, create: createIfNotExist}"},{"type":"method","string":"getLocalChannelSync"}],"module":false,"parent":"ChannelService","related":{"href":""},"has_related":true},{"id":"82-1350012987046","name":"pushMessageByUids","signiture":"ChannelService.prototype.pushMessageByUids()","type":"method","ctx":{"type":"method","constructor":"ChannelService","name":"pushMessageByUids","string":"ChannelService.prototype.pushMessageByUids()"},"description":{"full":"<p>Push message by uids. Group the uids by group. query status server for sid if sid not specified.<br />The callback get one argument (err).</p>","summary":"<p>Push message by uids. Group the uids by group. query status server for sid if sid not specified.<br />The callback get one argument (err).</p>","body":""},"full_description":"<p>Push message by uids. Group the uids by group. query status server for sid if sid not specified. The callback get one argument (err).</p>","code":"ChannelService.prototype.pushMessageByUids = function(msg, uids, cb) {\n  channelManager.pushMessageByUids(msg, uids, cb);\n};","params":[{"type":"param","types":["Object"],"name":"msg","description":"message that would be sent to client"},{"type":"param","types":["Array"],"name":"uids","description":"[{uid: userId, sid: serverId}] or [uids]"},{"type":"param","types":["Function"],"name":"cb","description":"callback function"}],"has_params":true,"tags":[{"type":"method","string":"pushMessageByUids"},{"type":"param","types":["Object"],"name":"msg","description":"message that would be sent to client"},{"type":"param","types":["Array"],"name":"uids","description":"[{uid: userId, sid: serverId}] or [uids]"},{"type":"param","types":["Function"],"name":"cb","description":"callback function"}],"module":false,"parent":"ChannelService","related":{"href":""},"has_related":true}]}]
+    </script>
+    <!-- Array，String，Object扩展函数（因为IE9-不支持，而Lunr有使用到) -->
+    <script src='js/extend.js'></script>
+    <!-- 将原来引用网上的jquery转为引用本地的 -->
+    <script src='js/jquery-1.6.4-min.js'></script>
+    <!-- 将Lunr和页面逻辑整合一起放在lunr.js文件 -->
+    <script src='js/lunr.js'></script>
+  </head>
+  <body>
+    <!-- 顶栏 -->
+    <div class="g-bar">
+      <!-- 顶栏github模块 -->
+      <div class="m-github">
+          <span class="title">gitHub:</span><a class="link" target="_blank" href="#">http://github.com/NetEase/pomelo</a>
+      </div>
+    </div>
+    <!-- 头部 -->
+    <div class="g-hd">
+      <div class="m-hdnav">
+      		<div class="bg">
+         	<div class="wrap">
+          		<ul class="cnt">
+          		  <li><a href="index.html">Home</a></li>
+        		    <li class="current"><a href="page.html">API</a></li>
+        		 	  <li><a href="#">Reference</a></li>
+          		 	<li><a href="#">Guide</a></li>
+          		  <li><a href="#">Applications</a></li>
+            		<li><a href="#">community</a></li>
+          		  <li><a href="#" class="last">FAQ</a></li>
+          		</ul>	
+         	 	</div>
+          </div>
+          <div class="logo"><a href="#"><div class="img"></div></a></div>
+      </div>
+    </div>
+    <!-- 整体居中 -->
+    <div class="g-doc">
+      <!-- 主体 -->
+      <div class="g-bd">
+        <!-- API主体 -->
+        <div class="m-wrap">
+          <!-- API -->
+          <div class='main'>
+            <div class='maintt'>
+              <h1>apiTest<span class='version'>0.1.2</span></h1>
+            </div>
+      
+            
+              <div class='cls' id='StatusService'>
+                <div class='clstt'>
+                  <h2>StatusService</h2>
+                </div>
+      
+                <div class='clsdes'>
+                  <p>@class StatusService</p>
+                </div>
+      
+                
+                  <div class='method' id='addStatus'>
+                    <div class='methodtt'>
+                      <h3>addStatus</h3>
+                      <h4>StatusService.prototype.addStatus()</h4>
+                      <p class='type'>type: method</p>
+                    </div>
+      
+                    <div class='params'>
+                      
+                        <h4>Params</h4>
+                      
+                      <ul>
+                        
+                          <li>uid - user id</li>
+                        
+                          <li>sid - server id</li>
+                        
+                          <li>cb - callback function</li>
+                        
+                      </ul>
+                    </div>
+      
+                    
+      
+                    <div>
+                      <p>Add uid and serverId pair into status records and kick the old login if any. The callback get one argument (err).</p>
+                    </div>
+      
+                    <div class='source'>
+                      <h4>Source</h4>
+                      <pre><code>StatusService.prototype.addStatus = function(uid, sid, cb) {
+	logger.debug('add satus:' + uid + ', ' + sid);
+	var oldSid = uidMap[uid];
+
+	function addNewStatus(err) {
+		if(!err) {
+			uidMap[uid] = sid;
+		}
+		utils.invokeCallback(cb, err);
+	}
+
+	if(!!oldSid) {
+		kick(uid, oldSid, addNewStatus);
+	} else {
+		addNewStatus();
+	}
+
+};</code></pre>
+                    </div>
+                    
+                  </div>
+                
+                  <div class='method' id='removeStatus'>
+                    <div class='methodtt'>
+                      <h3>removeStatus</h3>
+                      <h4>StatusService.prototype.removeStatus()</h4>
+                      <p class='type'>type: method</p>
+                    </div>
+      
+                    <div class='params'>
+                      
+                        <h4>Params</h4>
+                      
+                      <ul>
+                        
+                          <li>uid - user id</li>
+                        
+                          <li>cb - callback function</li>
+                        
+                      </ul>
+                    </div>
+      
+                    
+      
+                    <div>
+                      <p>Remove status record by uid. The callback get one argument (err).</p>
+                    </div>
+      
+                    <div class='source'>
+                      <h4>Source</h4>
+                      <pre><code>StatusService.prototype.removeStatus = function(uid, cb) {
+	delete uidMap[uid];
+
+	utils.invokeCallback(cb);
+};</code></pre>
+                    </div>
+                    
+                  </div>
+                
+                  <div class='method' id='queryStatus'>
+                    <div class='methodtt'>
+                      <h3>queryStatus</h3>
+                      <h4>StatusService.prototype.queryStatus()</h4>
+                      <p class='type'>type: method</p>
+                    </div>
+      
+                    <div class='params'>
+                      
+                        <h4>Params</h4>
+                      
+                      <ul>
+                        
+                          <li>uid - user id</li>
+                        
+                          <li>cb - sid: server id corresponsed with the uid or null/undefined for none</li>
+                        
+                      </ul>
+                    </div>
+      
+                    
+      
+                    <div>
+                      <p>Query status by uid. The callback get two arguments (err, sid)</p>
+                    </div>
+      
+                    <div class='source'>
+                      <h4>Source</h4>
+                      <pre><code>StatusService.prototype.queryStatus = function(uid, cb) {
+	utils.invokeCallback(cb, null, uidMap[uid]);
+};</code></pre>
+                    </div>
+                    
+                  </div>
+                
+                  <div class='method' id='queryStatusBatch'>
+                    <div class='methodtt'>
+                      <h3>queryStatusBatch</h3>
+                      <h4>StatusService.prototype.queryStatusBatch()</h4>
+                      <p class='type'>type: method</p>
+                    </div>
+      
+                    <div class='params'>
+                      
+                        <h4>Params</h4>
+                      
+                      <ul>
+                        
+                          <li>uids - list of uid</li>
+                        
+                          <li>cb - result:{sid:[uid]}, missing:[missingUid]</li>
+                        
+                      </ul>
+                    </div>
+      
+                    
+      
+                    <div>
+                      <p>Query status by uids. The callback get three arguments (err, result, missing)</p>
+                    </div>
+      
+                    <div class='source'>
+                      <h4>Source</h4>
+                      <pre><code>StatusService.prototype.queryStatusBatch = function(uids, cb) {
+	var result = {};
+	var missing = [];
+
+	var sid, list;
+	for(var i=0, l=uids.length; i&lt;l; i++) {
+		sid = uidMap[uids[i]];
+		if(!sid) {
+			missing.push(uids[i]);
+			continue;
+		}
+
+		list = result[sid];
+		if(!list) {
+			list = [];
+			result[sid] = list;
+		}
+		list.push(uids[i]);
+	}
+
+	utils.invokeCallback(cb, null, result, missing);
+};</code></pre>
+                    </div>
+                    
+                  </div>
+                
+              </div>
+            
+              <div class='cls' id='InterSession'>
+                <div class='clstt'>
+                  <h2>InterSession</h2>
+                </div>
+      
+                <div class='clsdes'>
+                  <p>Session is bound to each user and maintains a number of informations as follows:  key(socket.id), userId, userName, playerName, playerId, areaId, socket, etc.</p>
+                </div>
+      
+                
+                  <div class='method' id='userLogined'>
+                    <div class='methodtt'>
+                      <h3>userLogined</h3>
+                      <h4>InterSession.prototype.userLogined()</h4>
+                      <p class='type'>type: method</p>
+                    </div>
+      
+                    <div class='params'>
+                      
+                        <h4>Params</h4>
+                      
+                      <ul>
+                        
+                          <li>uid - userId</li>
+                        
+                      </ul>
+                    </div>
+      
+                    
+      
+                    <div>
+                      <p>User logined callback. This method would bind the uid with the session.</p>
+                    </div>
+      
+                    <div class='source'>
+                      <h4>Source</h4>
+                      <pre><code>InterSession.prototype.userLogined = function(uid) {
+	  //get origin session instance
+	  var session = exp.getSession(this.key);
+	  if(!session) {
+		    return false;
+	  }
+	  
+	  if(!!session._logined) {
+		    return false;
+	  }
+	  set(this, '_logined', true);
+	  set(this, 'uid', uid);
+	  uidMap[uid] = session;
+	  this.emit('login', session);
+	  return true;
+};</code></pre>
+                    </div>
+                    
+                  </div>
+                
+                  <div class='method' id='set'>
+                    <div class='methodtt'>
+                      <h3>set</h3>
+                      <h4>InterSession.prototype.set()</h4>
+                      <p class='type'>type: method</p>
+                    </div>
+      
+                    <div class='params'>
+                      
+                        <h4>Params</h4>
+                      
+                      <ul>
+                        
+                          <li>key - </li>
+                        
+                          <li>value - the value of key</li>
+                        
+                      </ul>
+                    </div>
+      
+                    
+      
+                    <div>
+                      <p>Set value for the session.</p>
+                    </div>
+      
+                    <div class='source'>
+                      <h4>Source</h4>
+                      <pre><code>InterSession.prototype.set = function(key, value) {
+    set(this, key, value);
+};</code></pre>
+                    </div>
+                    
+                  </div>
+                
+                  <div class='method' id='on'>
+                    <div class='methodtt'>
+                      <h3>on</h3>
+                      <h4>InterSession.prototype.on()</h4>
+                      <p class='type'>type: method</p>
+                    </div>
+      
+                    <div class='params'>
+                      
+                      <ul>
+                        
+                      </ul>
+                    </div>
+      
+                    
+      
+                    <div>
+                      <p>Bind event for the session.</p>
+                    </div>
+      
+                    <div class='source'>
+                      <h4>Source</h4>
+                      <pre><code>InterSession.prototype.on = function() {
+	  var session = exp.getSession(this.key);
+	  if(!session) {
+		    return false;
+	  }
+	  EventEmitter.prototype.on.apply(session, arguments);
+};</code></pre>
+                    </div>
+                    
+                  </div>
+                
+                  <div class='method' id='emit'>
+                    <div class='methodtt'>
+                      <h3>emit</h3>
+                      <h4>InterSession.prototype.emit()</h4>
+                      <p class='type'>type: method</p>
+                    </div>
+      
+                    <div class='params'>
+                      
+                      <ul>
+                        
+                      </ul>
+                    </div>
+      
+                    
+      
+                    <div>
+                      <p>Emit a event for the session.</p>
+                    </div>
+      
+                    <div class='source'>
+                      <h4>Source</h4>
+                      <pre><code>InterSession.prototype.emit = function() {
+	  var session = exp.getSession(this.key);
+	  if(!session) {
+		    return false;
+	  }
+	  EventEmitter.prototype.emit.apply(session, arguments);
+};</code></pre>
+                    </div>
+                    
+                  </div>
+                
+                  <div class='method' id='closing'>
+                    <div class='methodtt'>
+                      <h3>closing</h3>
+                      <h4>InterSession.prototype.closing()</h4>
+                      <p class='type'>type: method</p>
+                    </div>
+      
+                    <div class='params'>
+                      
+                      <ul>
+                        
+                      </ul>
+                    </div>
+      
+                    
+      
+                    <div>
+                      <p>Closing callback for the session.</p>
+                    </div>
+      
+                    <div class='source'>
+                      <h4>Source</h4>
+                      <pre><code>InterSession.prototype.closing = function() {
+	  var reason = this.isKicked ? 'kick' : null;
+	  this.emit('closing', this, reason);
+};</code></pre>
+                    </div>
+                    
+                  </div>
+                
+                  <div class='method' id='closed'>
+                    <div class='methodtt'>
+                      <h3>closed</h3>
+                      <h4>InterSession.prototype.closed()</h4>
+                      <p class='type'>type: method</p>
+                    </div>
+      
+                    <div class='params'>
+                      
+                      <ul>
+                        
+                      </ul>
+                    </div>
+      
+                    
+      
+                    <div>
+                      <p>Closed callback for the session.</p>
+                    </div>
+      
+                    <div class='source'>
+                      <h4>Source</h4>
+                      <pre><code>InterSession.prototype.closed = function() {
+	  if(!!this._closed) {
+		    return;
+	  }
+	  set(this, '_closed', true);
+	  set(this, '_logined', false);
+	  delete socketMap[this.key];
+	  delete msgQueues[this.key];
+
+	  var reason = this.isKicked ? 'kick' : null;
+	  this.emit('closed', this, reason);
+};</code></pre>
+                    </div>
+                    
+                  </div>
+                
+              </div>
+            
+              <div class='cls' id='Pomelo'>
+                <div class='clstt'>
+                  <h2>Pomelo</h2>
+                </div>
+      
+                <div class='clsdes'>
+                  <p>@class pomelo</p>
+                </div>
+      
+                
+                  <div class='method' id='createApp'>
+                    <div class='methodtt'>
+                      <h3>createApp</h3>
+                      <h4>Pomelo.prototype.createApp()</h4>
+                      <p class='type'>type: method</p>
+                    </div>
+      
+                    <div class='params'>
+                      
+                      <ul>
+                        
+                      </ul>
+                    </div>
+      
+                    
+      
+                    <div>
+                      <p>Create an pomelo application.</p>
+                    </div>
+      
+                    <div class='source'>
+                      <h4>Source</h4>
+                      <pre><code>Pomelo.prototype.createApp = function () {
+    var app = application;
+    app.stack = [].slice.apply(arguments);
+    app.init();
+    self.app = app;
+    return app;
+};</code></pre>
+                    </div>
+                    
+                  </div>
+                
+              </div>
+            
+              <div class='cls' id='Channel'>
+                <div class='clstt'>
+                  <h2>Channel</h2>
+                </div>
+      
+                <div class='clsdes'>
+                  <p>Channel  maintains a number of user informations: userId, serverId and their mapping.   It is used to  broadcast message to users in the channel. </p>
+                </div>
+      
+                
+                  <div class='method' id='add'>
+                    <div class='methodtt'>
+                      <h3>add</h3>
+                      <h4>Channel.prototype.add()</h4>
+                      <p class='type'>type: method</p>
+                    </div>
+      
+                    <div class='params'>
+                      
+                        <h4>Params</h4>
+                      
+                      <ul>
+                        
+                          <li>uid - user id</li>
+                        
+                          <li>sid - frontend server id which user has connected to</li>
+                        
+                          <li>cb - callback function</li>
+                        
+                      </ul>
+                    </div>
+      
+                    
+      
+                    <div>
+                      <p>Add user into channel. The callback get one argument (err).</p>
+                    </div>
+      
+                    <div class='source'>
+                      <h4>Source</h4>
+                      <pre><code>Channel.prototype.add = function(uid, sid, cb) {
+  var err = null;
+  if(!!this._destroy) {
+    err = new Error('channel ' + this.name + ' has been destroyed');
+  } else {
+    add(uid, sid, this.groups, this.defaultGroup);
+  }
+
+  process.nextTick(function() {
+    utils.invokeCallback(cb, err);
+  });
+};</code></pre>
+                    </div>
+                    
+                  </div>
+                
+                  <div class='method' id='leave'>
+                    <div class='methodtt'>
+                      <h3>leave</h3>
+                      <h4>Channel.prototype.leave()</h4>
+                      <p class='type'>type: method</p>
+                    </div>
+      
+                    <div class='params'>
+                      
+                        <h4>Params</h4>
+                      
+                      <ul>
+                        
+                          <li>uid - user id</li>
+                        
+                          <li>sid - frontend server id which user has connected to. remove uid for all groups if sid not specified.</li>
+                        
+                          <li>cb - callback function</li>
+                        
+                      </ul>
+                    </div>
+      
+                    
+      
+                    <div>
+                      <p>Remove user from channel. The callback get one argument (err).</p>
+                    </div>
+      
+                    <div class='source'>
+                      <h4>Source</h4>
+                      <pre><code>Channel.prototype.leave = function(uid, sid, cb) {
+	if(!sid) {
+		removeUid(uid, this.groups, this.defaultGroup);
+	} else {
+    deleteFrom(uid, sid, this.groups[sid]);
+  }
+
+  process.nextTick(function() {
+    utils.invokeCallback(cb);
+  });
+};</code></pre>
+                    </div>
+                    
+                  </div>
+                
+                  <div class='method' id='destroy'>
+                    <div class='methodtt'>
+                      <h3>destroy</h3>
+                      <h4>Channel.prototype.destroy()</h4>
+                      <p class='type'>type: method</p>
+                    </div>
+      
+                    <div class='params'>
+                      
+                        <h4>Params</h4>
+                      
+                      <ul>
+                        
+                          <li>cb - callback function</li>
+                        
+                      </ul>
+                    </div>
+      
+                    
+      
+                    <div>
+                      <p>Destroy channel. The callback get one argument (err).</p>
+                    </div>
+      
+                    <div class='source'>
+                      <h4>Source</h4>
+                      <pre><code>Channel.prototype.destroy = function(cb) {
+  this.__destroy = true;
+  exp.destroyChannel(this.name, force);
+
+  process.nextTick(function() {
+    utils.invokeCallback(cb);
+  });
+};</code></pre>
+                    </div>
+                    
+                  </div>
+                
+                  <div class='method' id='pushMessage'>
+                    <div class='methodtt'>
+                      <h3>pushMessage</h3>
+                      <h4>Channel.prototype.pushMessage()</h4>
+                      <p class='type'>type: method</p>
+                    </div>
+      
+                    <div class='params'>
+                      
+                        <h4>Params</h4>
+                      
+                      <ul>
+                        
+                          <li>msg - message that would be sent to client</li>
+                        
+                          <li>cb - callback function</li>
+                        
+                      </ul>
+                    </div>
+      
+                    
+      
+                    <div>
+                      <p>Push message to all the members in the channel. The callback get one argument (err).</p>
+                    </div>
+      
+                    <div class='source'>
+                      <h4>Source</h4>
+                      <pre><code>Channel.prototype.pushMessage = function(msg, cb) {
+	var self = this;
+	regroup(this.groups, this.defaultGroup, function(err, miss) {
+		if(!!err) {
+			utils.invokeCallback(cb, err);
+			return;
+		}
+
+		if(__.size(self.groups) === 0) {
+			utils.invokeCallback();
+			return;
+		}
+		sendMessageByGroup(msg, self.groups, cb);
+	});
+};</code></pre>
+                    </div>
+                    
+                  </div>
+                
+              </div>
+            
+              <div class='cls' id='regroup'>
+                <div class='clstt'>
+                  <h2>regroup</h2>
+                </div>
+      
+                <div class='clsdes'>
+                  <p>query connection status of the ungroup uids from status server and then merge them into groups</p>
+                </div>
+      
+                
+                  <div class='method' id='add'>
+                    <div class='methodtt'>
+                      <h3>add</h3>
+                      <h4>regroup.prototype.add()</h4>
+                      <p class='type'>type: method</p>
+                    </div>
+      
+                    <div class='params'>
+                      
+                        <h4>Params</h4>
+                      
+                      <ul>
+                        
+                          <li>user - id</li>
+                        
+                          <li>server - id</li>
+                        
+                          <li>{Object} - grouped uids, , key: sid, value: [uid]</li>
+                        
+                          <li>{Array} - ungroup uids</li>
+                        
+                      </ul>
+                    </div>
+      
+                    
+      
+                    <div>
+                      <p>add uid and sid into group. add the uid into defGroup if the sid not specified</p>
+                    </div>
+      
+                    <div class='source'>
+                      <h4>Source</h4>
+                      <pre><code>regroup.prototype.add = function(uid, sid, groups, defGroup) {
+	if(!sid) {
+		defGroup.push(uid);
+		return true;
+	}
+
+	var group = groups[sid];
+	if(!group) {
+		group = [];
+		groups[sid] = group;
+	}
+
+	group.push(uid);
+	return true;
+};</code></pre>
+                    </div>
+                    
+                  </div>
+                
+              </div>
+            
+              <div class='cls' id='Application'>
+                <div class='clstt'>
+                  <h2>Application</h2>
+                </div>
+      
+                <div class='clsdes'>
+                  <p>@class application</p>
+                </div>
+      
+                
+                  <div class='method' id='set'>
+                    <div class='methodtt'>
+                      <h3>set</h3>
+                      <h4>Application.prototype.set()</h4>
+                      <p class='type'>type: method</p>
+                    </div>
+      
+                    <div class='params'>
+                      
+                        <h4>Params</h4>
+                      
+                      <ul>
+                        
+                          <li>setting - the property of setting</li>
+                        
+                          <li>val - the value of setting</li>
+                        
+                      </ul>
+                    </div>
+      
+                    
+      
+                    <div>
+                      <p>Assign <code>setting</code> to <code>val</code>, or return <code>setting</code>'s value. Mounted servers inherit their parent server's settings.</p>
+                    </div>
+      
+                    <div class='source'>
+                      <h4>Source</h4>
+                      <pre><code>Application.prototype.set = function (setting, val) {
+	var env = app.get('env');
+	if (utils.endsWith(val, '.json')) {
+		val = require(val); 
+		if (!!val[env]) {
+			val = val[env];
+		}
+	}
+	if (1 == arguments.length) {
+		if (this.settings.hasOwnProperty(setting)) {
+			return this.settings[setting];
+		} else if (this.parent) {
+			return this.parent.set(setting);
+		}
+	} else {
+		this.settings[setting] = val;
+		this[setting] = val;
+		return this;
+	}
+};</code></pre>
+                    </div>
+                    
+                  </div>
+                
+                  <div class='method' id='get'>
+                    <div class='methodtt'>
+                      <h3>get</h3>
+                      <h4>Application.prototype.get()</h4>
+                      <p class='type'>type: method</p>
+                    </div>
+      
+                    <div class='params'>
+                      
+                        <h4>Params</h4>
+                      
+                      <ul>
+                        
+                          <li>setting - the property of setting</li>
+                        
+                      </ul>
+                    </div>
+      
+                    
+      
+                    <div>
+                      <p>Get property from setting.</p>
+                    </div>
+      
+                    <div class='source'>
+                      <h4>Source</h4>
+                      <pre><code>Application.prototype.get = function (setting) {
+	var val = this.settings[setting];
+	return val;
+};</code></pre>
+                    </div>
+                    
+                  </div>
+                
+                  <div class='method' id='enabled'>
+                    <div class='methodtt'>
+                      <h3>enabled</h3>
+                      <h4>Application.prototype.enabled()</h4>
+                      <p class='type'>type: method</p>
+                    </div>
+      
+                    <div class='params'>
+                      
+                        <h4>Params</h4>
+                      
+                      <ul>
+                        
+                          <li>setting - the property of setting</li>
+                        
+                      </ul>
+                    </div>
+      
+                    
+      
+                    <div>
+                      <p>Check if <code>setting</code> is enabled.</p>
+                    </div>
+      
+                    <div class='source'>
+                      <h4>Source</h4>
+                      <pre><code>Application.prototype.enabled = function (setting) {
+	return !!this.set(setting);
+};</code></pre>
+                    </div>
+                    
+                  </div>
+                
+                  <div class='method' id='disabled'>
+                    <div class='methodtt'>
+                      <h3>disabled</h3>
+                      <h4>Application.prototype.disabled()</h4>
+                      <p class='type'>type: method</p>
+                    </div>
+      
+                    <div class='params'>
+                      
+                        <h4>Params</h4>
+                      
+                      <ul>
+                        
+                          <li>setting - the </li>
+                        
+                      </ul>
+                    </div>
+      
+                    
+      
+                    <div>
+                      <p>Check if <code>setting</code> is disabled.</p>
+                    </div>
+      
+                    <div class='source'>
+                      <h4>Source</h4>
+                      <pre><code>Application.prototype.disabled = function (setting) {
+	return !this.set(setting);
+};</code></pre>
+                    </div>
+                    
+                  </div>
+                
+                  <div class='method' id='enable'>
+                    <div class='methodtt'>
+                      <h3>enable</h3>
+                      <h4>Application.prototype.enable()</h4>
+                      <p class='type'>type: method</p>
+                    </div>
+      
+                    <div class='params'>
+                      
+                        <h4>Params</h4>
+                      
+                      <ul>
+                        
+                          <li>setting - the property of setting</li>
+                        
+                      </ul>
+                    </div>
+      
+                    
+      
+                    <div>
+                      <p>Enable <code>setting</code>.</p>
+                    </div>
+      
+                    <div class='source'>
+                      <h4>Source</h4>
+                      <pre><code>Application.prototype.enable = function (setting) {
+	var settingPath = __dirname + '/common/service/' + setting + '.js';
+	var exists = fs.existsSync(settingPath);
+	if (exists) {
+		require(settingPath).run(app.get(setting + 'Config'));
+	}
+	return this.set(setting, true);
+};</code></pre>
+                    </div>
+                    
+                  </div>
+                
+                  <div class='method' id='disable'>
+                    <div class='methodtt'>
+                      <h3>disable</h3>
+                      <h4>Application.prototype.disable()</h4>
+                      <p class='type'>type: method</p>
+                    </div>
+      
+                    <div class='params'>
+                      
+                        <h4>Params</h4>
+                      
+                      <ul>
+                        
+                          <li>setting - the property of setting</li>
+                        
+                      </ul>
+                    </div>
+      
+                    
+      
+                    <div>
+                      <p>Disable <code>setting</code>.</p>
+                    </div>
+      
+                    <div class='source'>
+                      <h4>Source</h4>
+                      <pre><code>Application.prototype.disable = function (setting) {
+	return this.set(setting, false);
+};</code></pre>
+                    </div>
+                    
+                  </div>
+                
+                  <div class='method' id='configure'>
+                    <div class='methodtt'>
+                      <h3>configure</h3>
+                      <h4>Application.prototype.configure()</h4>
+                      <p class='type'>type: method</p>
+                    </div>
+      
+                    <div class='params'>
+                      
+                        <h4>Params</h4>
+                      
+                      <ul>
+                        
+                          <li>env - environment</li>
+                        
+                          <li>fn - function</li>
+                        
+                      </ul>
+                    </div>
+      
+                    
+      
+                    <div>
+                      <p>Configure callback for zero or more envs, when no env is specified that callback will be invoked for all environments. Any combination can be used multiple times, in any order desired.</p>
+
+<h2>Examples</h2>
+
+<p>app.configure(function(){      // executed for all envs    });</p>
+
+<p>app.configure('stage', function(){      // executed staging env    });</p>
+
+<p>app.configure('stage', 'production', function(){      // executed for stage and production    });</p>
+                    </div>
+      
+                    <div class='source'>
+                      <h4>Source</h4>
+                      <pre><code>Application.prototype.configure = function (env, fn) {
+	var args = [].slice.call(arguments);
+	fn = args.pop();
+
+	var runEnv = 'all';
+	if (args.length &gt; 0) {
+		runEnv = args[0];
+	}
+	var serverType = 'all';
+	if (args.length &gt; 1) {
+		serverType = args[1];
+	}
+	if (runEnv == 'all' || runEnv.indexOf(this.settings.env) &gt;= 0) {
+		if (serverType == 'all' || this.settings.serverType == 'all' || 
+				serverType.indexOf(this.settings.serverType) &gt;= 0) {
+			fn.call(this);
+		}
+	}
+	return this;
+};</code></pre>
+                    </div>
+                    
+                  </div>
+                
+              </div>
+            
+              <div class='cls' id='ChannelService'>
+                <div class='clstt'>
+                  <h2>ChannelService</h2>
+                </div>
+      
+                <div class='clsdes'>
+                  <p>@class ChannelService</p>
+                </div>
+      
+                
+                  <div class='method' id='getLocalChannel'>
+                    <div class='methodtt'>
+                      <h3>getLocalChannel</h3>
+                      <h4>ChannelService.prototype.getLocalChannel()</h4>
+                      <p class='type'>type: method</p>
+                    </div>
+      
+                    <div class='params'>
+                      
+                        <h4>Params</h4>
+                      
+                      <ul>
+                        
+                          <li>opts - channel info parameters {name: channelName, create: createIfNotExist}</li>
+                        
+                          <li>cb - callback function</li>
+                        
+                      </ul>
+                    </div>
+      
+                    
+      
+                    <div>
+                      <p>Asynchronous getLocalChannel.The callback gets two arguments (err, channel).</p>
+                    </div>
+      
+                    <div class='source'>
+                      <h4>Source</h4>
+                      <pre><code>ChannelService.prototype.getLocalChannel = function(opts, cb) {
+  var channel = channelManager.getChannel(opts.name, opts.create);
+  var err = null;
+  if(!channel) {
+    err = new Error('local channel not exist, name:' + opts.name);
+  }
+
+  process.nextTick(function() {
+    utils.invokeCallback(cb, err, channel);
+  });
+};</code></pre>
+                    </div>
+                    
+                  </div>
+                
+                  <div class='method' id='getLocalChannelSync'>
+                    <div class='methodtt'>
+                      <h3>getLocalChannelSync</h3>
+                      <h4>ChannelService.prototype.getLocalChannelSync()</h4>
+                      <p class='type'>type: method</p>
+                    </div>
+      
+                    <div class='params'>
+                      
+                        <h4>Params</h4>
+                      
+                      <ul>
+                        
+                          <li>opts - channel info parameters {name: channelName, create: createIfNotExist}</li>
+                        
+                      </ul>
+                    </div>
+      
+                    
+      
+                    <div>
+                      <p>Synchronous getLocalChannel. Return the channel named opts.name if opts.create is true.</p>
+                    </div>
+      
+                    <div class='source'>
+                      <h4>Source</h4>
+                      <pre><code>ChannelService.prototype.getLocalChannelSync = function(opts) {
+  return channelManager.getChannel(opts.name, opts.create);
+};</code></pre>
+                    </div>
+                    
+                  </div>
+                
+                  <div class='method' id='pushMessageByUids'>
+                    <div class='methodtt'>
+                      <h3>pushMessageByUids</h3>
+                      <h4>ChannelService.prototype.pushMessageByUids()</h4>
+                      <p class='type'>type: method</p>
+                    </div>
+      
+                    <div class='params'>
+                      
+                        <h4>Params</h4>
+                      
+                      <ul>
+                        
+                          <li>msg - message that would be sent to client</li>
+                        
+                          <li>uids - [{uid: userId, sid: serverId}] or [uids]</li>
+                        
+                          <li>cb - callback function</li>
+                        
+                      </ul>
+                    </div>
+      
+                    
+      
+                    <div>
+                      <p>Push message by uids. Group the uids by group. query status server for sid if sid not specified. The callback get one argument (err).</p>
+                    </div>
+      
+                    <div class='source'>
+                      <h4>Source</h4>
+                      <pre><code>ChannelService.prototype.pushMessageByUids = function(msg, uids, cb) {
+  channelManager.pushMessageByUids(msg, uids, cb);
+};</code></pre>
+                    </div>
+                    
+                  </div>
+                
+              </div>
+            
+          </div>
+          <!-- API导航 -->
+          <div class='side'>
+            <div class='m-nav'>
+              <div class='m-search'>
+                <input type="text" id="search-input" placeholder="Search"></input>
+                <div id="search-results"></div>
+              </div>
+              <ul>
+                
+                  <li>
+                    <h3><a target='StatusService' class='cap'>StatusService</a></h3>
+                    <ul>
+                      
+                        <li><a target='addStatus'>addStatus</a></li>
+                      
+                        <li><a target='removeStatus'>removeStatus</a></li>
+                      
+                        <li><a target='queryStatus'>queryStatus</a></li>
+                      
+                        <li><a target='queryStatusBatch'>queryStatusBatch</a></li>
+                      
+                    </ul>
+                  </li>
+                
+                  <li>
+                    <h3><a target='InterSession' class='cap'>InterSession</a></h3>
+                    <ul>
+                      
+                        <li><a target='userLogined'>userLogined</a></li>
+                      
+                        <li><a target='set'>set</a></li>
+                      
+                        <li><a target='on'>on</a></li>
+                      
+                        <li><a target='emit'>emit</a></li>
+                      
+                        <li><a target='closing'>closing</a></li>
+                      
+                        <li><a target='closed'>closed</a></li>
+                      
+                    </ul>
+                  </li>
+                
+                  <li>
+                    <h3><a target='Pomelo' class='cap'>Pomelo</a></h3>
+                    <ul>
+                      
+                        <li><a target='createApp'>createApp</a></li>
+                      
+                    </ul>
+                  </li>
+                
+                  <li>
+                    <h3><a target='Channel' class='cap'>Channel</a></h3>
+                    <ul>
+                      
+                        <li><a target='add'>add</a></li>
+                      
+                        <li><a target='leave'>leave</a></li>
+                      
+                        <li><a target='destroy'>destroy</a></li>
+                      
+                        <li><a target='pushMessage'>pushMessage</a></li>
+                      
+                    </ul>
+                  </li>
+                
+                  <li>
+                    <h3><a target='regroup' class='cap'>regroup</a></h3>
+                    <ul>
+                      
+                        <li><a target='add'>add</a></li>
+                      
+                    </ul>
+                  </li>
+                
+                  <li>
+                    <h3><a target='Application' class='cap'>Application</a></h3>
+                    <ul>
+                      
+                        <li><a target='set'>set</a></li>
+                      
+                        <li><a target='get'>get</a></li>
+                      
+                        <li><a target='enabled'>enabled</a></li>
+                      
+                        <li><a target='disabled'>disabled</a></li>
+                      
+                        <li><a target='enable'>enable</a></li>
+                      
+                        <li><a target='disable'>disable</a></li>
+                      
+                        <li><a target='configure'>configure</a></li>
+                      
+                    </ul>
+                  </li>
+                
+                  <li>
+                    <h3><a target='ChannelService' class='cap'>ChannelService</a></h3>
+                    <ul>
+                      
+                        <li><a target='getLocalChannel'>getLocalChannel</a></li>
+                      
+                        <li><a target='getLocalChannelSync'>getLocalChannelSync</a></li>
+                      
+                        <li><a target='pushMessageByUids'>pushMessageByUids</a></li>
+                      
+                    </ul>
+                  </li>
+                
+              </ul>
+            </div>
+          </div>
+        </div>
+        <!-- page四列模块 -->
+        <div class="m-4col">
+          <div class="col">
+            <h2>About</h2>
+            <p>Place your blog information here. This is the "Bottom Column 1" widget area. There are 4 bottom cloumn areas. You can drag and drag widgets to any of these 4 column. As these footer columns use "Smart Columns", they'll automatically resize beautifully no matter if you use 1,2,3 or 4 columns.</p>
+          </div>
+          <div class="col">
+            <h2>blogroll</h2>
+            <p><a href="#">Documentation</a></p>
+            <p><a href="#">Plugins</a></p>
+            <p><a href="#">Suggest Ideas</a></p>
+            <p><a href="#">Support Forum</a></p>
+            <p><a href="#">Themes</a></p>
+            <p><a href="#">WordPress Blog</a></p>
+            <p><a href="#">WordPress Planet</a></p>
+          </div>
+          <div class="col">
+            <h2>Recent Posts</h2>
+            <p><a href="#">Praesent mollis mauris eget</a></p>
+            <p><a href="#">Phasellus et tellus nisl</a></p>
+            <p><a href="#">Donec nibh sapien</a></p>
+            <p><a href="#">Hello world!</a></p>
+          </div>
+          <div class="col last">
+            <h2>Meta</h2>
+            <p><a href="#">Login</a></p>
+            <p><a href="#">Entries RSS</a></p>
+            <p><a href="#">comments RSS</a></p>
+            <p><a href="#">WordPress.org</a></p>
+            <p>I'm using <a href="#">AdRotate</a></p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- 尾部 -->
+    <div class="g-ft">
+      <!-- 尾部模块 -->
+      <div class="m-ft">
+          Pomelo by Netease, Inc. Rleased under the MIT license -Copyright © Netease 2012
+      </div>
+    </div>
+    <!-- 向上图标 -->
+    <div class='m-arrow f-dn'><a href="#"></a></div>
+    <!-- 代码高亮模块 -->
+    <script src='js/hijs.js'></script>
+    <!-- 页面效果模块 -->
+    <script src='js/api.js'></script>
+  </body>
+</html>
+

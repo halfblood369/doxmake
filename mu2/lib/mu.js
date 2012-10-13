@@ -164,7 +164,6 @@ mu.compileAndRender = function (templateName, view) {
       beginRenderWithStream(parsed[0].tokens, view, mu.cache, stream);
     });
   }
-  
   return stream;
 };
 

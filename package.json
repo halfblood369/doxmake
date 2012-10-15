@@ -1,9 +1,27 @@
 {
-	"name": "doxTemplate",
-	"version": "0.0.1",
-	"dependencies": {
-		"dox": "*",
-		"github-flavored-markdown": "*"
+  "name": "doxmake",
+  "version": "0.1.4",
+  "dependencies": {
+    "dox": "*",
+    "github-flavored-markdown": "*",
+    "commander": "*"
+  },
+  "author": "halfblood",
+  "description": "doxTemplate ===========",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "bin": {
+		"doxmake": "./bin/doxmake"
 	},
-	"author": "halfblood"
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/halfblood369/doxTemplate.git"
+  },
+  "license": "BSD"
 }

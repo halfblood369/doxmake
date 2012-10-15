@@ -1,7 +1,7 @@
-var DoxTemplate = require('../lib/doxTemplate');
+var Doxmake = require('../lib/doxmake');
 
-new DoxTemplate({
+new Doxmake({
 	name: "apiTest",
 	release: "0.1.2",
-	directory: "/home/lwj/workspace/apiGenerate/jsLibrary"
+	directory: "/home/lwj/workspace/pomelo-core/lib"
 }).run();

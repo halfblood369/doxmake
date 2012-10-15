@@ -1,0 +1,31 @@
+#!/usr/bin/env node
+/**
+ * Module dependencies
+ */
+var program = require('commander');
+var Doxmake = require('../');
+
+
+program
+	.version(Doxmake.version)
+	.option('-n, --name <name>', 'the name of apiDocument')
+	.option('-r, --release <release>', 'the release of apiDocument')
+	.option('-d, --directory <directory>', 'the directory of apiDocument');
+
+program.on('--help', function() {
+
+		console.log(' Examples:');
+		console.log('');
+		console.log('  $ doxmake -n <name> -r <release> -d <directory>');
+		console.log('');
+});
+
+program.parse(process.argv);
+
+new Doxmake({
+	name: program.name,
+	release: program.release,
+	directory: program.directory
+}).run();
+
+

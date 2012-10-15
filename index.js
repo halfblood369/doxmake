@@ -1,1 +1,1 @@
-module.exports = require('./lib/doxTemplate');
+module.exports = require('./lib/doxmake');

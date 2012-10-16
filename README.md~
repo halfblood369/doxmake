@@ -1,10 +1,8 @@
 doxTemplate
 ===========
 
-整合 TJ的dox和Oliver 的dox-template模板 ，做了点改动，可以扫描给定的整个目录，对目录下的所有js文件 
+整合 TJ的dox和Oliver 的dox-template模板，修改其模版内容，可以扫描给定的整个目录，对目录下的所有js文件 
 documentation generate ，生成一个html文件。目前改动较小，会不断更新维护。
-
-使用见test，会在传入的目录下生成doc文件夹，包含有index.html文件及相应的css和js文件。index.html即是需要的api文档。
 ## Installation
 安装
 ```
@@ -21,10 +19,13 @@ npm install doxmake -g
 
 ```
 结果会在输入目录"/home/lwj/workspace/pomelo-core/lib"生成doc文件夹，包含css,js资源和index.html文件。
-index.html
+index.html即为生成的api文档，文档名为"apiDocument"，版本为"0.0.1"
 
 ```
  doxmake -d "/home/lwj/workspace/pomelo-core/lib"
+
+```
+同上面，只是生成的api文档默认的名字是doxmake，版本是0.0.1
 
 
 

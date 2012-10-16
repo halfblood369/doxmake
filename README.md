@@ -30,8 +30,9 @@ Options:
 
 ```
   doxmake -n apiDocument -r 0.0.1 -d "/home/lwj/workspace/pomelo-core/lib"
+
 ```
-结果会在
+结果会在输入目录"/home/lwj/workspace/pomelo-core/lib"生成doc文件夹，包含css,js资源和index.html文件。
 
 
 

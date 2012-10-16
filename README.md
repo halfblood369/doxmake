@@ -14,19 +14,23 @@ npm install doxmake -g
 
 doxmake --help
 
-`` Options:
+```
+Options:
 
     -h, --help                   output usage information
     -V, --version                output the version number
     -n, --name <name>            the name of apiDocument
     -r, --release <release>      the release of apiDocument
     -d, --directory <directory>  the directory of apiDocument
-
  Examples:
 
   $ doxmake -n <name> -r <release> -d <directory>
+```
+## Examples
 
 ```
+```
+
 
 
 

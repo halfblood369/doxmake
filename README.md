@@ -27,7 +27,7 @@ index.html即为生成的api文档，文档名为"apiDocument"，版本为"0.0.1
  doxmake -d "/home/lwj/workspace/pomelo-core/lib"
 
 ```
-同上面，只是生成的api文档默认的名字是doxmakeDocument，版本是0.0.1
+同上面，只是生成的api文档默认的名字是doxmake，版本是0.0.1
 
 
 

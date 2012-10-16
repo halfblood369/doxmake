@@ -29,8 +29,9 @@ Options:
 ## Examples
 
 ```
+  doxmake -n apiDocument -r 0.0.1 -d "/home/lwj/workspace/pomelo-core/lib"
 ```
-
+结果会在
 
 
 

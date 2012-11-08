@@ -1,6 +1,6 @@
 {
   "name": "doxmake",
-  "version": "0.1.22",
+  "version": "0.1.27",
   "dependencies": {
     "dox": "*",
     "github-flavored-markdown": "*",

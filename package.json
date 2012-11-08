@@ -1,12 +1,12 @@
 {
   "name": "doxmake",
-  "version": "0.1.5",
+  "version": "0.1.7",
   "dependencies": {
     "dox": "*",
     "github-flavored-markdown": "*",
     "commander": "*"
   },
-  "author": "halfblood",
+  "author": "halfblood369",
   "description": "doxTemplate ===========",
   "main": "index.js",
   "directories": {
